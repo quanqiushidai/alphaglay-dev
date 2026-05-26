@@ -1,136 +1,1062 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>精美电子明信片</title>
-    <style>
-        body {
-            background-color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: "Microsoft YaHei", "SimSun", serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APEX NEXT — Future Digital Platform</title>
+  <style>
+    :root {
+      --bg: #050714;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.14);
+      --text: #f7f8ff;
+      --muted: #a8b0d6;
+      --line: rgba(255, 255, 255, 0.14);
+      --primary: #7c3cff;
+      --secondary: #00e5ff;
+      --third: #ff3cf7;
+      --green: #48ffb3;
+      --shadow: 0 30px 100px rgba(0, 0, 0, 0.45);
+    }
 
-        /* 明信片主容器 */
-        .postcard {
-            width: 600px;
-            height: 380px;
-            background-color: #fffaf0; /* 象牙白 */
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            position: relative;
-            display: flex;
-            border: 1px solid #d1c1a8;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* 中间的分割线 */
-        .postcard::after {
-            content: "";
-            position: absolute;
-            top: 10%;
-            bottom: 10%;
-            left: 50%;
-            width: 1px;
-            background: rgba(0, 0, 0, 0.1);
-        }
+    html {
+      scroll-behavior: smooth;
+    }
 
-        /* 左侧内容区：寄语 */
-        .left-side {
-            flex: 1;
-            padding-right: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      overflow-x: hidden;
+    }
 
-        .message {
-            font-size: 18px;
-            line-height: 1.8;
-            color: #444;
-            font-style: italic;
-            margin-top: 20px;
-        }
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      width: 560px;
+      height: 560px;
+      border-radius: 999px;
+      filter: blur(80px);
+      opacity: 0.45;
+      z-index: -4;
+      pointer-events: none;
+      animation: floatGlow 10s ease-in-out infinite alternate;
+    }
 
-        /* 右侧内容区：邮票和地址 */
-        .right-side {
-            flex: 1;
-            padding-left: 30px;
-            position: relative;
-        }
+    body::before {
+      left: -160px;
+      top: -120px;
+      background: radial-gradient(circle, var(--primary), transparent 65%);
+    }
 
-        /* 邮票区域 */
-        .stamp {
-            width: 80px;
-            height: 100px;
-            border: 2px dashed #ccc;
-            position: absolute;
-            top: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #eee;
-            color: #999;
-            font-size: 12px;
-            text-align: center;
-        }
+    body::after {
+      right: -180px;
+      bottom: -160px;
+      background: radial-gradient(circle, var(--secondary), transparent 62%);
+      animation-delay: -3s;
+    }
 
-        /* 地址横线 */
-        .address-lines {
-            margin-top: 120px;
-        }
+    @keyframes floatGlow {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(50px, 35px, 0) scale(1.12); }
+    }
 
-        .line {
-            border-bottom: 1px solid #999;
-            margin-bottom: 25px;
-            height: 30px;
-            color: #222;
-            font-size: 16px;
-            padding-left: 5px;
-        }
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      opacity: 0.28;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: radial-gradient(circle at center, black, transparent 78%);
+    }
 
-        /* 右下角邮编 */
-        .zip-code {
-            position: absolute;
-            bottom: 10px;
-            right: 0;
-            letter-spacing: 5px;
-            font-weight: bold;
-            color: #555;
-            border: 1px solid #555;
-            padding: 2px 5px;
-        }
+    .orbital {
+      position: fixed;
+      width: 760px;
+      height: 760px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: -2;
+      animation: rotate 26s linear infinite;
+    }
 
-    </style>
+    .orbital::before,
+    .orbital::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--secondary);
+      box-shadow: 0 0 35px var(--secondary);
+    }
+
+    .orbital::before { left: 64px; top: 118px; }
+    .orbital::after { right: 84px; bottom: 128px; background: var(--third); box-shadow: 0 0 35px var(--third); }
+
+    @keyframes rotate {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 16px;
+      z-index: 50;
+      margin-top: 16px;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: rgba(9, 12, 31, 0.62);
+      backdrop-filter: blur(22px);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      font-size: 21px;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 28% 25%, #fff, transparent 18%),
+        linear-gradient(135deg, var(--primary), var(--secondary) 58%, var(--green));
+      box-shadow: 0 0 30px rgba(124, 60, 255, 0.72);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: 0.25s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow: 0 16px 45px rgba(0, 229, 255, 0.22), inset 0 1px 0 rgba(255,255,255,.36);
+      transition: transform .25s ease, box-shadow .25s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 24px 60px rgba(124, 60, 255, 0.34), inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    .hero {
+      position: relative;
+      padding: 96px 0 72px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.06fr 0.94fr;
+      gap: 46px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--line);
+      color: #dce2ff;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(72, 255, 179, 0.8);
+      animation: pulse 1.7s infinite;
+    }
+
+    @keyframes pulse {
+      70% { box-shadow: 0 0 0 12px rgba(72, 255, 179, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(72, 255, 179, 0); }
+    }
+
+    h1 {
+      font-size: clamp(46px, 8vw, 92px);
+      line-height: 0.93;
+      letter-spacing: -0.08em;
+      max-width: 840px;
+    }
+
+    .gradient-text {
+      color: transparent;
+      background: linear-gradient(90deg, #fff 0%, #b9c1ff 24%, var(--secondary) 54%, var(--third) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .lead {
+      margin-top: 24px;
+      max-width: 640px;
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 44px;
+      max-width: 650px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      letter-spacing: -0.05em;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .phone-wrap {
+      position: relative;
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+      perspective: 1200px;
+    }
+
+    .halo {
+      position: absolute;
+      width: 410px;
+      height: 410px;
+      border-radius: 50%;
+      background: conic-gradient(from 180deg, var(--primary), var(--secondary), var(--third), var(--primary));
+      filter: blur(28px);
+      opacity: .32;
+      animation: rotate 10s linear infinite;
+    }
+
+    .device {
+      position: relative;
+      width: min(360px, 88vw);
+      min-height: 560px;
+      padding: 18px;
+      border-radius: 44px;
+      border: 1px solid rgba(255,255,255,.22);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.035)),
+        rgba(8, 11, 28, 0.78);
+      box-shadow: 0 50px 120px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.26);
+      backdrop-filter: blur(28px);
+      transform: rotateY(-13deg) rotateX(8deg);
+      animation: deviceFloat 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes deviceFloat {
+      from { transform: rotateY(-13deg) rotateX(8deg) translateY(0); }
+      to { transform: rotateY(-8deg) rotateX(5deg) translateY(-18px); }
+    }
+
+    .screen {
+      min-height: 524px;
+      border-radius: 32px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 30% 10%, rgba(0,229,255,.32), transparent 32%),
+        radial-gradient(circle at 85% 30%, rgba(255,60,247,.3), transparent 30%),
+        #080b1f;
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 18px;
+    }
+
+    .screen-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dots i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.42);
+    }
+
+    .mini-card {
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      border-radius: 24px;
+      margin-bottom: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    }
+
+    .mini-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+
+    .chart {
+      height: 110px;
+      margin-top: 12px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(72,255,179,.22), transparent),
+        url("data:image/svg+xml,%3Csvg width='320' height='110' viewBox='0 0 320 110' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 82 C40 62 45 92 80 66 C116 38 137 52 163 42 C203 28 220 12 250 28 C282 46 288 24 320 18' fill='none' stroke='%2348ffb3' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") center / cover no-repeat;
+    }
+
+    .coin-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .coin {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .coin-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .badge-up {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .section {
+      padding: 74px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1;
+      letter-spacing: -0.07em;
+      max-width: 720px;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 430px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      padding: 24px;
+      border-radius: 32px;
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035));
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      transition: transform .28s ease, border-color .28s ease, background .28s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0,229,255,.45);
+      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.055));
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      right: -60px;
+      top: -60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,.45), transparent 68%);
+    }
+
+    .icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 38px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 23px;
+      letter-spacing: -0.04em;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.07);
+      border-radius: 36px;
+      padding: 26px;
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+
+    .panel.big {
+      min-height: 420px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(124,60,255,.34), transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(0,229,255,.28), transparent 38%),
+        rgba(255,255,255,.07);
+    }
+
+    .terminal {
+      margin-top: 28px;
+      border-radius: 24px;
+      background: rgba(0,0,0,.36);
+      border: 1px solid rgba(255,255,255,.12);
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .terminal-bar {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.09);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .code {
+      padding: 18px;
+      color: #dfffee;
+      line-height: 1.8;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .code em { color: var(--green); font-style: normal; }
+    .code b { color: var(--secondary); font-weight: 700; }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      padding: 18px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .step-num {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      font-weight: 900;
+    }
+
+    .step h4 {
+      margin-bottom: 6px;
+      font-size: 17px;
+    }
+
+    .step p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .marquee {
+      overflow: hidden;
+      border-block: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      padding: 18px 0;
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 24s linear infinite;
+    }
+
+    .marquee span {
+      font-size: clamp(24px, 4vw, 48px);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,.36);
+      margin-right: 48px;
+      white-space: nowrap;
+    }
+
+    @keyframes marquee {
+      to { transform: translateX(-50%); }
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .price-card {
+      padding: 26px;
+      border-radius: 32px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(18px);
+      transition: .25s;
+    }
+
+    .price-card.hot {
+      background:
+        linear-gradient(145deg, rgba(124,60,255,.24), rgba(0,229,255,.12)),
+        rgba(255,255,255,.08);
+      border-color: rgba(0,229,255,.38);
+      transform: translateY(-14px);
+    }
+
+    .price-card h3 {
+      font-size: 23px;
+      margin-bottom: 12px;
+    }
+
+    .money {
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: -0.07em;
+      margin-bottom: 18px;
+    }
+
+    .price-card ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      color: var(--muted);
+      margin: 22px 0;
+    }
+
+    .price-card li::before {
+      content: "✓";
+      color: var(--green);
+      font-weight: 900;
+      margin-right: 9px;
+    }
+
+    .cta {
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      padding: 72px 26px;
+      border-radius: 42px;
+      border: 1px solid rgba(255,255,255,.16);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(0,229,255,.34), transparent 38%),
+        linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 {
+      margin: 0 auto 18px;
+    }
+
+    .cta p {
+      color: var(--muted);
+      max-width: 680px;
+      margin: 0 auto 28px;
+      line-height: 1.8;
+      font-size: 17px;
+    }
+
+    footer {
+      padding: 36px 0 48px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .showcase {
+        grid-template-columns: 1fr;
+      }
+
+      .phone-wrap {
+        min-height: 520px;
+      }
+
+      .feature-grid,
+      .pricing {
+        grid-template-columns: 1fr;
+      }
+
+      .price-card.hot {
+        transform: none;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-desc {
+        margin-top: 14px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .container {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .hero {
+        padding-top: 64px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .device {
+        transform: none;
+        animation: none;
+      }
+
+      .phone-wrap {
+        min-height: auto;
+        margin-top: 26px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="noise"></div>
+  <div class="orbital"></div>
 
-    <div class="postcard">
-        <div class="left-side">
-            <div class="message">
-                亲爱的朋友：<br><br>
-                好久不见！展信舒颜。<br>
-                在这个快节奏的时代，想用一张慢下来的明信片，为你送去一份跨越屏幕的问候。<br>
-                愿你今天心情愉快。
+  <nav class="nav container">
+    <div class="nav-inner">
+      <div class="logo">
+        <div class="logo-mark"></div>
+        APEX NEXT
+      </div>
+      <div class="nav-links">
+        <a href="#features">功能</a>
+        <a href="#showcase">体验</a>
+        <a href="#pricing">方案</a>
+      </div>
+      <a class="btn" href="#start">立即体验</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero container">
+      <div class="hero-grid">
+        <div class="reveal">
+          <div class="eyebrow"><span class="pulse"></span> 2026 Next-Gen Digital Experience</div>
+          <h1>打造一个<span class="gradient-text">看起来就很贵</span>的未来感页面</h1>
+          <p class="lead">
+            暗色高级感、玻璃拟态、霓虹渐变、动态光效、响应式布局和 3D 视觉卡片全部集成。适合企业官网、AI 产品、交易平台、SaaS、Web3、支付系统和科技品牌首页。
+          </p>
+          <div class="hero-actions">
+            <a class="btn" href="#start">开始探索 →</a>
+            <a class="btn ghost" href="#features">查看亮点</a>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <strong>99.99%</strong>
+              <span>稳定在线体验</span>
             </div>
+            <div class="stat">
+              <strong>120ms</strong>
+              <span>极速交互反馈</span>
+            </div>
+            <div class="stat">
+              <strong>4K UI</strong>
+              <span>高端视觉表现</span>
+            </div>
+          </div>
         </div>
 
-        <div class="right-side">
-            <div class="stamp">
-                贴邮票处<br>(STAMP)
-            </div>
+        <div class="phone-wrap reveal">
+          <div class="halo"></div>
+          <div class="device" id="device">
+            <div class="screen">
+              <div class="screen-top">
+                <div class="dots"><i></i><i></i><i></i></div>
+                <span style="color: var(--muted); font-size: 13px;">Live</span>
+              </div>
 
-            <div class="address-lines">
-                <div class="line">收件人：诸葛先生</div>
-                <div class="line">地址：云端实验室 101 号</div>
-                <div class="line">备注：记得查收好心情</div>
-            </div>
+              <div class="mini-card">
+                <div class="mini-title"><span>Portfolio Balance</span><span class="badge-up">+18.42%</span></div>
+                <div class="price">$128,590</div>
+                <div class="chart"></div>
+              </div>
 
-            <div class="zip-code">100086</div>
+              <div class="mini-card">
+                <div class="coin-row">
+                  <div class="coin">
+                    <div class="coin-icon"></div>
+                    <div>
+                      <strong>AI Engine</strong><br />
+                      <span style="color: var(--muted); font-size: 13px;">智能策略系统</span>
+                    </div>
+                  </div>
+                  <span class="badge-up">Active</span>
+                </div>
+              </div>
+
+              <div class="mini-card">
+                <div class="coin-row">
+                  <div class="coin">
+                    <div class="coin-icon" style="background: linear-gradient(135deg, #ff3cf7, #ffb86b);"></div>
+                    <div>
+                      <strong>Security Layer</strong><br />
+                      <span style="color: var(--muted); font-size: 13px;">风控保护中</span>
+                    </div>
+                  </div>
+                  <span>98%</span>
+                </div>
+              </div>
+
+              <div class="mini-card">
+                <div class="coin-row">
+                  <div class="coin">
+                    <div class="coin-icon" style="background: linear-gradient(135deg, #48ffb3, #00e5ff);"></div>
+                    <div>
+                      <strong>Global Node</strong><br />
+                      <span style="color: var(--muted); font-size: 13px;">全球加速网络</span>
+                    </div>
+                  </div>
+                  <span class="badge-up">Fast</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>AI POWERED</span><span>ULTRA FAST</span><span>SECURE BY DESIGN</span><span>GLOBAL SCALE</span><span>MODERN UI</span>
+        <span>AI POWERED</span><span>ULTRA FAST</span><span>SECURE BY DESIGN</span><span>GLOBAL SCALE</span><span>MODERN UI</span>
+      </div>
     </div>
 
+    <section class="section container" id="features">
+      <div class="section-head reveal">
+        <h2>不是普通页面，是一眼就能记住的高级品牌体验</h2>
+        <p class="section-desc">把产品优势变成视觉冲击力，让用户打开页面第一秒就觉得专业、可信、先进。</p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card reveal">
+          <div class="icon">⚡</div>
+          <h3>极速首屏</h3>
+          <p>纯 HTML + CSS + 原生 JS，无框架依赖，打开速度快，适合官网、落地页和营销页面。</p>
+        </article>
+
+        <article class="feature-card reveal">
+          <div class="icon">🧊</div>
+          <h3>玻璃拟态</h3>
+          <p>使用透明卡片、模糊背景、柔和边框和霓虹光影，直接拉满科技质感。</p>
+        </article>
+
+        <article class="feature-card reveal">
+          <div class="icon">🛡️</div>
+          <h3>可信视觉</h3>
+          <p>适合金融科技、AI 工具、Web3 平台、支付系统、代理服务和企业 SaaS。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section container" id="showcase">
+      <div class="showcase">
+        <div class="panel big reveal">
+          <div class="eyebrow"><span class="pulse"></span> Smart Console</div>
+          <h2>一套页面，直接撑起产品高级感</h2>
+          <p class="section-desc" style="margin-top: 16px;">你可以把这里改成你的平台介绍、交易数据、AI 能力、节点服务、支付系统或企业业务介绍。</p>
+
+          <div class="terminal">
+            <div class="terminal-bar">apex-next / deploy</div>
+            <div class="code">
+              <div><em>➜</em> initializing premium interface...</div>
+              <div><em>➜</em> loading <b>glassmorphism</b> engine...</div>
+              <div><em>➜</em> enabling <b>neon gradient</b> effects...</div>
+              <div><em>✔</em> page is ready for global users.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel reveal">
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div>
+                <h4>替换品牌信息</h4>
+                <p>把 APEX NEXT 改成你的项目名，修改主标题和介绍文案。</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <div>
+                <h4>接入真实链接</h4>
+                <p>把按钮链接换成注册页、控制台、下载页或联系方式。</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <div>
+                <h4>直接部署上线</h4>
+                <p>保存为 index.html，上传到 nginx、宝塔、Cloudflare Pages 都可以。</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <div>
+                <h4>扩展业务模块</h4>
+                <p>可继续加登录入口、价格表、FAQ、后台 API、客服入口和多语言。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="pricing">
+      <div class="section-head reveal">
+        <h2>高级价格卡片模块</h2>
+        <p class="section-desc">如果你做 SaaS、代理、支付、AI 工具或企业服务，可以直接保留这个模块。</p>
+      </div>
+
+      <div class="pricing">
+        <div class="price-card reveal">
+          <h3>Starter</h3>
+          <div class="money">$19</div>
+          <p class="section-desc">适合个人项目和测试站。</p>
+          <ul>
+            <li>基础品牌页面</li>
+            <li>响应式布局</li>
+            <li>基础动效</li>
+          </ul>
+          <a class="btn ghost" href="#start" style="width: 100%;">选择方案</a>
+        </div>
+
+        <div class="price-card hot reveal">
+          <h3>Pro</h3>
+          <div class="money">$49</div>
+          <p class="section-desc">适合正式商业官网。</p>
+          <ul>
+            <li>高级视觉设计</li>
+            <li>品牌落地页模块</li>
+            <li>转化按钮设计</li>
+          </ul>
+          <a class="btn" href="#start" style="width: 100%;">推荐选择</a>
+        </div>
+
+        <div class="price-card reveal">
+          <h3>Enterprise</h3>
+          <div class="money">$99</div>
+          <p class="section-desc">适合企业平台和产品矩阵。</p>
+          <ul>
+            <li>多页面扩展</li>
+            <li>接口数据接入</li>
+            <li>后台系统适配</li>
+          </ul>
+          <a class="btn ghost" href="#start" style="width: 100%;">联系咨询</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="start">
+      <div class="cta reveal">
+        <h2>现在就把你的项目包装成顶级科技品牌</h2>
+        <p>这个页面已经包含完整结构、动效和响应式适配。你只需要替换文字、Logo、按钮链接，就可以直接上线。</p>
+        <a class="btn" href="javascript:void(0)">Launch Your Brand →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    © 2026 APEX NEXT. Built with pure HTML, CSS and JavaScript.
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    reveals.forEach((el, index) => {
+      el.style.transitionDelay = `${Math.min(index * 70, 420)}ms`;
+      observer.observe(el);
+    });
+
+    const device = document.getElementById('device');
+    document.addEventListener('mousemove', (e) => {
+      if (window.innerWidth < 900) return;
+      const x = (e.clientX / window.innerWidth - 0.5) * 14;
+      const y = (e.clientY / window.innerHeight - 0.5) * -14;
+      device.style.transform = `rotateY(${x - 10}deg) rotateX(${y + 6}deg) translateY(-10px)`;
+    });
+  </script>
 </body>
 </html>
